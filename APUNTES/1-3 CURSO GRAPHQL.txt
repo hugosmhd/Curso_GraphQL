@@ -1,0 +1,237 @@
+CURSO DE GRAPHQL
+REQUISITOS INSTALAR NODEJS
+
+LISTA DE EXTENSIONES DE VS
+https://github.com/graphql-course/informacion-util/blob/master/EXTENSIONS.md
+
+GRAPHQL
+VIDEO 9
+es un lenguaje de consulta que nos va a permitir definir los datos que queremos pedir de una API
+no es una libreria o framework
+no se da overfetching ni underfetching
+Overfetching: busqueda excesiva es decir obtener mas datos de los que se necesitan 
+Underfetching: lo contrario a overfetching
+Hay un unico end-point
+Se puede construir sobre otra API
+
+GRAPHQL VS REST
+VIDEO 10
+
+REST
+Una URL = un recurso
+No podemos elegir lo que vamos a recibir en JSON
+Versionado. Multiples versiones
+No autodocumentado
+Almacenamiento en cache
+
+GRAPHQL
+Una URL = Toda la informacion
+Podemos elegir lo que vamos a recibir en JSON
+No existe versionado
+Autodocumentado
+No tiene almacenamiento en cache
+
+EJEMPLO PRACTICO 
+VIDEO 11
+Se trabajo con una API de star wars y se hizo una consulta en REST y GRAPHQL
+REST
+https://swapi.dev/
+
+Graphql
+https://graphql.org/swapi-graphql/?query=%7B%0A%20%20person(personID%3A%201)%20%7B%0A%20%20%20%20name%0A%20%20%20%20birthYear%0A%20%20%20%20homeworld%20%7B%0A%20%20%20%20%20%20name%0A%20%20%20%20%7D%2C%0A%20%20%20%20filmConnection%20%7B%0A%20%20%20%20%20%20films%20%7B%0A%20%20%20%20%20%20%20%20title%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D
+{
+  person(personID: 1) {
+    name
+    birthYear
+    homeworld {
+      name
+    },
+    filmConnection {
+      films {
+        title
+      }
+    }
+  }
+}
+
+VIDEO 12
+QUERY: es la consulta
+MUTATION: servira para modificar
+SUBSCRIPTION: se encarga de escuchar los cambios que se puedan dar en el servidor para obtener las actualizaciones en
+tiempo real
+
+campos en camelCase: es decir empezara en minusculas y si hay mas palabras inician en mayusculas esteEsUnCampo
+tipos en PascalCase: es decir todas las palabras en mayusculas
+Enums: nombre del tipo en PascalCase / valores en ALL_CAPS separado por guiones bajos
+
+
+VIDEO 13
+TIPOS DE ESCALARES - SCALAR TYPES
+Datos primitivos que pueden almacenar un solo valor
+Int
+Float
+String
+Boolean
+ID: identificador unico. De tipo int o string
+
+Sintaxis
+nombreDeLaPropiedad: tipoDeData
+nombre: String	edad: Int	activo: Boolean
+
+Se pueden definir scaleres personalizados: scalar MyScalarPersonalizado
+
+VIDEO 14
+OBJECT TYPES
+Son objetos personalizados que definen como se vera en la API
+type NombrePascalCase {
+	propiedad : tipoScalar
+}
+
+VIDEO 15
+ENUM TYPES
+Son similares a un escalar, utiles para trabajar con una lista de valores predefinidos
+type Profesor {
+	nombre: String
+	apellidos: String
+	cursos: Cursos = NPM		// Con valor por defecto NPM
+}
+
+enum Cursos {
+	GRAPHQL_DE_CERO
+	NPM_LIBRERIAS
+	COMPODOC
+}
+
+VIDEO 16
+MODIFICADORES DE TIPO
+Sirven para modificar el comportamiento cuando usamos un tipo
+2 tipos:
+	!: indica valor obligatorio
+	[]: lista de valores con un elemento o mas
+
+type Profesor {
+	nombre: String!
+	cursos: [String]
+}
+
+[]! - LISTA CON VALOR REQUERIDO / OBLIGATORIO
+Lista NO NULA  pero valores pueden serlo
+type Profesor {
+	nombre: String!
+	cursos: [String]!
+}
+
+const resultado = [null, "1", "hola", null]	-> NO ERROR
+const resultado2 = null		-> ERROR
+
+[!] - VALORES LISTA REQUERIDO / OBLIGATORIO
+Lista PUEDE SER NULA pero valores NO PUEDEN SERLO
+type Profesor {
+	nombre: String!
+	cursos: [String!]
+}
+
+const resultado = [null, "1", "hola", null]	-> ERROR
+const resultado2 = null		-> NO ERROR
+
+[!]! - LISTA Y VALORES REQUERIDO / OBLIGATORIO
+La lista y el contenido NO PUEDEN SER nulos
+type Profesor {
+	nombre: String!
+	cursos: [String!]!
+}
+
+const resultado = [null, "1", "hola", null]	-> ERROR
+const resultado2 = null		-> ERROR
+const resultado3 = ["Hola", "Anartz"]	-> NO ERROR
+
+VIDEO 17
+INTERFACES
+Definiciones abstractas de atributos comunes, muy util para retornar objetos de diferentes tipos.
+
+interface Perfil {
+	nombre: String!
+	email: String!
+	edad: Int!
+}
+
+type Alumno implements Perfil {
+	nombre: String!
+	email: String!
+	edad: Int!
+	curso: String
+}
+
+VIDEO 18
+ROOT TYPES
+Son puntos de entrada. Sirven para comunicar al cliente con el servidor 
+3 tipos:
+	Query: consulta(en rest -> get)
+	Mutation: Mutacion(en rest -> post, patch, put, delete)
+	subscription: Suscripcion. Interaccion de info en tiempo real
+
+Minimo es OBLIGATORIO añadir el tipo de raiz QUERY
+
+type Query {
+	lista: [String]
+}
+
+type Mutation {
+	insertar(elemento: Int): [Int]
+}
+
+type Subscription {
+	infoInsertada: [Int]
+}
+
+VIDEO 19
+ROOT TYPE - QUERY
+Punto de entrada para recuperar datos (hacer consultas)
+
+VIDEO 20
+ROOT TYPE - MUTATION
+Punto de entrada para realizar las operaciones de modificacion (POST, PUT, PATCH, DELETE)
+
+type Mutation {
+	insertarElemento(nombre: String): String		// el ultimo string es lo que devuelve
+	borrarElemento(id: ID!): [String]
+	borrarTodo: [String]
+}
+
+VIDEO 21
+ROOT TYPE - SUBSCRIPTION
+Punto de entrada para obtener informacion en tiempo real
+Utiliza la conexion mediante Web Sockets para obtener cambios
+
+type Subscription {
+	nuevoElemento: String
+}
+
+VIDEO 22
+INPUT TYPE
+Elementos que nos permiten pasar valores a Queries / Mutations
+Se comportan como los argumentos ante cualquier operacion
+
+input TagInput {
+	label: String!
+	description: String
+}
+
+type Tag {
+	id: ID!
+	label: String!
+	description: String
+}
+
+mutation {
+	nuevoTag(tag: TagInput!): Tag
+}
+
+VIDEO 23
+COMENTARIOS
+Podemos documentar nuestras APIS añadiendo comentarios en el schema
+Graphql admite Markdown dentro del schema para comentarios
+
+Tipos:
+	1 linea: "Description for the type"
+	+ de una liena: """ aqui van los comentarios con mas de una liena"""

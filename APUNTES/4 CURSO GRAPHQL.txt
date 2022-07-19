@@ -1,0 +1,170 @@
+VIDEO 26
+PLAYGROUND DE APOLLO SERVER EXPRESS
+En este link se pueden hacer pruebas con la api de la formula 1
+http://f1-graphql.herokuapp.com/
+
+VIDEO 27
+API DE GRAPHQL QUE SE UTILIZARA PARA REALIZAR LAS PRUEBAS
+https://breaking-bad-voting.herokuapp.com/
+
+VIDEO 28
+QUERIES SENCILLA CON LA API BREAKING-BAD
+{
+  characters {
+    id
+    name
+    actor
+  }
+}
+
+VIDEO 29
+QUERIES CON PARAMETROS
+---------------------------------
+{
+  character(id: "1") {
+    id
+    name
+    total_episodes
+  }
+}
+---------------------------------
+{
+  character(id: "1") {
+    id
+    name
+    total_episodes
+  }
+  characters {
+    id
+    name
+    description
+    total_episodes
+  }
+}
+
+VIDEO 30
+MERGE DE LA MISMA INSTANCIA DE UN OBJETO
+{
+  character(id: "1") {
+    id
+    name
+  }
+  character(id: "1") {
+    description
+  }
+  character(id: "1") {
+    description
+    photo
+  }
+}
+
+VIDEO 31
+ALIAS
+{
+  walter: character(id: "1") {
+    id
+    name
+    description
+    photo
+  }
+  jesse: character(id: "2") {
+    id
+    name
+    description
+    photo
+  }
+}
+
+VIDEO 32
+FRAGMENTS
+Son elementos que nos permiten simplificar definiendo en un bloque una coleccion de datos a recuperar sin tener que
+indicarlos individualmente
+{
+  walter: character(id: "1") {
+    ...personajesFragment
+  }
+  jesse: character(id: "2") {
+    ...personajesFragment
+  }
+  hank: character(id: "4") {
+    ...personajesFragment
+  }
+}
+
+fragment personajesFragment on Character {
+  id
+  name
+  actor
+  description
+  photo
+}
+
+VIDEO 33
+QUERY VARIABLES
+Es una forma mas limpia de enviar parametros
+query listaPersonajes($walter: ID!, $jesse: ID!, $hank: ID!){
+  walter: character(id: $walter) {
+    ...personajesFragment
+  }
+  jesse: character(id: $jesse) {
+    ...personajesFragment
+  }
+  hank: character(id: $hank) {
+    ...personajesFragment
+  }
+}
+
+fragment personajesFragment on Character {
+  id
+  name
+  actor
+}
+
+**** ESTO VA EN LA PARTE DE QUERY VARIABLES ****
+{
+  "walter": "1",
+  "jesse": "2",
+  "hank": "4"
+}
+
+VIDEO 34
+MUTATIONS
+mutation addVote($character: ID!) {
+  addVote(character: $character) {
+    id
+    character
+    createdAt
+  }
+}
+**** ESTO VA EN LA PARTE DE QUERY VARIABLES ****
+{
+  "character": "2"
+}
+
+VIDEO 35 
+DIRECTIVAS INCLUDE / SKIP
+Sirve para incluir o excluir campos de una consulta para que todo sea mas eficiente
+
+EJEMPLO DEL INCLUDE
+query getCharacters($mostrarActor: Boolean!) {
+  characters {
+    id
+    name
+    actor @include(if: $mostrarActor)
+  }
+}
+**** ESTO VA EN LA PARTE DE QUERY VARIABLES ****
+{
+  "mostrarActor": false
+}
+Lo anterior tambien aplica para el skip solo que de forma inversa
+
+VIDEO 37
+SUBSCRIPTION
+subscription {
+  newVote {
+    id
+    name
+    votes
+  }
+}
